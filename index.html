@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKE Tag</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Staatliches', sans-serif;
+      background-color: #003B5C;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+      text-align: center;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border: 4px solid #F8B800;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      overflow-y: auto; /* Permitimos el desplazamiento */
+    }
+
+    .header {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background-image: url('mascota.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #F8B800;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 5;
+      padding: 0 20px;
+      text-shadow: 
+        -1px -1px 0 #003B5C,
+         1px -1px 0 #003B5C,
+        -1px  1px 0 #003B5C,
+         1px  1px 0 #003B5C;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #003B5C;
+      color: white;
+      border-color: #003B5C;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005C82;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .button {
+      width: 100%;
+      height: 80px;
+      background-color: #F8B800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.2;
+      transition: background-color 0.3s ease;
+    }
+
+    .button.active {
+      background-color: #003B5C;
+    }
+
+    .button:hover {
+      background-color: #0072B1;
+    }
+
+    .session-log {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      max-height: 100px;
+      overflow-y: auto;
+      width: 100%;
+      margin-bottom: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #003B5C #f1f1f1;
+    }
+
+    .session-entry {
+      padding: 5px;
+      margin-bottom: 5px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+
+    .session-log::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .session-log::-webkit-scrollbar-thumb {
+      background-color: #F8B800;
+      border-radius: 4px;
+    }
+
+    .session-log::-webkit-scrollbar-track {
+      background: #003B5C;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .button {
+        padding: 8px 16px;
+      }
+
+      .header {
+        height: 150px;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>MKE Tag</h1>
+    </div>
+
+    <input type="number" id="pitchNumber" placeholder="Número de lanzamiento">
+
+    <div class="buttons">
+      <button class="button" id="sb" onclick="toggleTag('sb')">SB</button>
+      <button class="button" id="po" onclick="toggleTag('po')">PO</button>
+      <button class="button" id="backTag" onclick="toggleTag('backTag')">Back Tag</button>
+      <button class="button" id="caughtSteal" onclick="toggleTag('caughtSteal')">Caught Steal</button>
+      <button class="button" id="delaySteal" onclick="toggleTag('delaySteal')">Delay Steal</button>
+      <button class="button" id="firstBase" onclick="toggleTag('firstBase')">1st</button>
+      <button class="button" id="secondBase" onclick="toggleTag('secondBase')">2nd</button>
+      <button class="button" id="thirdBase" onclick="toggleTag('thirdBase')">3rd</button>
+      <button class="button" id="homeBase" onclick="toggleTag('homeBase')">HOME</button>
+    </div>
+
+    <button onclick="saveTag()">Guardar Tag</button>
+    <button onclick="newSession()">Nueva Sesión</button>
+    <button onclick="downloadPDF()">Descargar PDF</button>
+
+    <div id="sessionLog" class="session-log"></div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  let activeTags = [];
+
+  function toggleTag(tag) {
+    const button = document.getElementById(tag);
+    button.classList.toggle('active');
+    if (button.classList.contains('active')) {
+      activeTags.push(tag);
+    } else {
+      activeTags = activeTags.filter(item => item !== tag);
+    }
+  }
+
+  function saveTag() {
+    const pitchNumber = document.getElementById('pitchNumber').value;
+    if (pitchNumber && activeTags.length > 0) {
+      const logEntry = `Lanzamiento: ${pitchNumber}, Tags: ${activeTags.join(', ')}`;
+      const sessionLog = document.getElementById('sessionLog');
+      const entry = document.createElement('div');
+      entry.classList.add('session-entry');
+      entry.textContent = logEntry;
+      sessionLog.appendChild(entry);
+      activeTags = [];
+      document.getElementById('pitchNumber').value = '';
+      document.querySelectorAll('.button').forEach(button => button.classList.remove('active'));
+    } else {
+      alert('Por favor, ingresa un número de lanzamiento y selecciona al menos un tag.');
+    }
+  }
+
+  function newSession() {
+    document.getElementById('sessionLog').innerHTML = '';
+    activeTags = [];
+    document.querySelectorAll('.button').forEach(button => button.classList.remove('active'));
+  }
+
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const sessionLog = document.getElementById('sessionLog');
+    const entries = sessionLog.getElementsByClassName('session-entry');
+    let y = 10;
+
+    // Establecer la fuente 'Staatliches'
+    doc.setFont("Staatliches", "normal");
+    doc.setTextColor(0, 0, 0); // Color de texto negro
+
+    // Fondo gris con bordes redondeados y borde azul
+    doc.setFillColor(233, 233, 233); // Fondo gris
+    doc.setDrawColor(0, 59, 92); // Borde azul (color Brewers)
+    doc.setLineWidth(2);
+    doc.roundedRect(5, y, 200, 30 + (entries.length * 15), 10, 10, 'F'); // Rectángulo con bordes redondeados
+
+    // Añadir las entradas de los tags
+    for (let i = 0; i < entries.length; i++) {
+      doc.text(entries[i].textContent, 10, y + 10);
+      y += 15;
+    }
+
+    // Guardar el archivo PDF
+    doc.save('mke_tag.pdf');
+  }
+</script>
+
+</body>
+</html>
